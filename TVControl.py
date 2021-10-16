@@ -1,43 +1,49 @@
 
 #Class to control a tv
-class tvcontrol:
+class TVControl:
     device_id = ""
     device_name = ""
     IPAddr = ""
     pin = ""
-    def __init__(self, device_id = 'my_device_id', device_name = 'my_device_name', IPAddr = "10.0.0.213", pin = '6438'):
+    IsConnected = False
+
+    def __init__(self, device_id='my_device_id', device_name='my_device_name', IPAddr="10.0.0.213", pin='6438'):
         from bravia_tv import BraviaRC
-        #Save input state
+        # Save input state
         self.device_id = device_id
         self.device_name = device_name
         self.IPAddr = IPAddr
         self.pin = pin
 
-        #Create the BraviaRC agent
+        # Create the BraviaRC agent
         self.agent = BraviaRC(IPAddr)
-        pin = '6438'
-        braviarc.connect(pin, device_id, 'my_device_name')
+        self.agent.connect(self.pin, self.device_id, self.device_name)
+        self.IsConnected = self.agent.is_connected()
 
+    # Return "On" or "Off"
+    def GetPowerStatus(self):
+        if self.IsConnected:
+            return self.agent.get_power_status()
+        return "Unknown"
 
-if braviarc.is_connected():
-    # get power status
-    power_status = braviarc.get_power_status()
-    print(power_status)
+    def GetVolume(self):
+        if self.IsConnected:
+            return self.agent.get_volume_info().get('volume')
+        return -1
 
-    # get playing info
-    #playing_content = braviarc.get_playing_info()
+    def GetPlayingInfo(self):
+        if self.IsConnected:
+            return self.agent.get_playing_info()
+        return {}
 
-    # print current playing channel
-    #print(playing_content.get('title'))
+    def GetPlayingChannel(self):
+        if self.IsConnected:
+            return self.GetPlayingInfo().get('title')
+        return "Unknown"
 
-    # get volume info
-    volume_info = braviarc.get_volume_info()
-
-    # print current volume
-    print(volume_info.get('volume'))
-
-    # change channel
-    #braviarc.play_content(uri)
+    #def PlayContent(self):
+        # change channel
+        #braviarc.play_content(uri)
 
     # get app list
     #app_info = braviarc.load_app_list()
@@ -47,7 +53,6 @@ if braviarc.is_connected():
     #braviarc.start_app("Netflix")
 
     # turn off the TV
-    braviarc.turn_off()
-
-else:
-    print("Failed")
+    def TurnOffTV(self):
+        if self.IsConnected:
+            self.agent.turn_off()

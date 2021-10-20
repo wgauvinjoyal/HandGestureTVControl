@@ -14,10 +14,13 @@ from HandDectection import HandDetector
 def main():
     #class_names = ["down", "palm", "l", "fist", "fist_moved", "thumb", "index", "ok", "palm_moved", "c"]
     #model = keras.models.load_model('handrecognition_model.h5')
-
+    tv = TVControl()
+    #tv.TurnOffTV()
     cap = cv2.VideoCapture(0)
     detector = HandDetector(detectionCon=0.75, trackCon=0.5)
     pe = PoseEstiamtion()
+
+
     while True:
         success, img = cap.read()
         img = detector.findHands(img)
@@ -29,6 +32,8 @@ def main():
             action = pe.GetAction(Landmark)
             if not (action == "None"):
                 print(action)
+
+            tv.DoAction(action)
 
         cv2.imshow("Image", img)
 

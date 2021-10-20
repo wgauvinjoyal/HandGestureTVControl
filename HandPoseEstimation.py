@@ -74,6 +74,8 @@ class PoseEstiamtion:
             self.action = "SwipeRight"
         elif self.ActionClose():
             self.action = "Close"
+        elif self.ActionOpen():
+            self.action = "Open"
         else:
             self.action = "None"
         return self.action
@@ -129,5 +131,10 @@ class PoseEstiamtion:
 
     def ActionClose(self):
         if self.state == "Fist" and self.prev_state == "Five":
+            return True
+        return False
+
+    def ActionOpen(self):
+        if self.state == "Five" and self.prev_state == "Fist":
             return True
         return False
